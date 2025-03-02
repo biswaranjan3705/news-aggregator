@@ -21,8 +21,8 @@ class CreateArticlesTable extends Migration
             $table->string('author')->nullable();
             $table->string('source'); // News API source
             $table->string('category')->nullable();
-            $table->string('url')->nullable();
-            $table->string('image_url')->nullable();
+            $table->text('url')->nullable();
+            $table->text('image_url')->nullable();
             $table->dateTime('published_at');
             $table->timestamps();
         });

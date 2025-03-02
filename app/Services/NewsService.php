@@ -95,20 +95,38 @@ class NewsService
 
     private function storeArticle($article, $source)
     {
+        // Ensure the title is not empty
+        if (empty($article['title'])) {
+            return; // Skip inserting if the title is empty
+        }
+
+        // Generate a slug and ensure it's unique
+        $slug = Str::slug($article['title']);
+        if (empty($slug)) {
+            $slug = Str::random(10); // Generate a random slug if conversion fails
+        }
+
+        // Check if an article with the same slug already exists
+        $existingArticle = Article::where('slug', $slug)->first();
+        if ($existingArticle) {
+            return; // Skip inserting if the slug already exists
+        }
+
         Article::updateOrCreate(
+            [
+                'slug' => $slug,
+            ],
             [
                 'title' => $article['title'],
                 'url' => $article['url'],
-                'slug' => Str::slug($article['title']),
-            ],
-            [
                 'content' => $article['description'] ?? '',
                 'author' => $article['author'] ?? 'Unknown',
                 'source' => $source,
                 'category' => $article['category'] ?? 'General',
                 'image_url' => $article['image_url'] ?? '',
-                'published_at' => $article['publishedAt'] ?? now(),
+                'published_at' => $article['published_at'] ?? now(),
             ]
         );
     }
+
 }
